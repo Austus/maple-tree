@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: maple-tree-svc
+  profiles:
+    active: dev
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+

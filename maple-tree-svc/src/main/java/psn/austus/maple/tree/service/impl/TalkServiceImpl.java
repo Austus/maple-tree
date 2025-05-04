@@ -6,9 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import psn.austus.maple.tree.constant.RedisKeys;
+import psn.austus.maple.tree.dao.TalkLogDAO;
+import psn.austus.maple.tree.entity.TalkLog;
 import psn.austus.maple.tree.response.SpeakResponse;
 import psn.austus.maple.tree.service.TalkService;
 import psn.austus.maple.tree.tools.RedisTool;
+
+import java.util.Date;
 
 @Api("Talk Service")
 @Slf4j
@@ -17,6 +21,10 @@ public class TalkServiceImpl implements TalkService {
 
     @Autowired
     RedisTool redisTool;
+
+    @Autowired
+    TalkLogDAO talkLogDAO;
+
 
     @Override
     public SpeakResponse speak(String arg){
@@ -43,6 +51,13 @@ public class TalkServiceImpl implements TalkService {
             }
             redisTool.saveValue(key,result,60);
         }
+
+        TalkLog log = new TalkLog();
+        log.setQuestion(arg);
+        log.setResponse(result);
+        log.setCreateTime(new Date());
+        talkLogDAO.insert(log);
+
         response.setCode("1");
         response.setMessage(result);
 
